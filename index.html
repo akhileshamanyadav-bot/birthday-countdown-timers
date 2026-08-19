@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Birthday Countdown Timers 🎂</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f0f13;
+      --card: #1a1a24;
+      --accent: #ff6b9d;
+      --accent2: #c084fc;
+      --text: #f1f5f9;
+      --muted: #94a3b8;
+      --success: #34d399;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      background-image: 
+        radial-gradient(ellipse at 20% 20%, rgba(255, 107, 157, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(192, 132, 252, 0.12) 0%, transparent 50%);
+    }
+
+    header {
+      text-align: center;
+      padding: 2.5rem 1rem 1.5rem;
+    }
+
+    header h1 {
+      font-size: clamp(1.8rem, 5vw, 2.6rem);
+      font-weight: 700;
+      background: linear-gradient(135deg, #ff6b9d, #c084fc, #60a5fa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.4rem;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1rem 3rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: 1.25rem;
+      padding: 1.5rem;
+      border: 1px solid rgba(255,255,255,0.06);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(255, 107, 157, 0.15);
+    }
+
+    .card.today {
+      border-color: var(--success);
+      box-shadow: 0 0 30px rgba(52, 211, 153, 0.25);
+    }
+
+    .card.today::before {
+      background: var(--success);
+    }
+
+    .name {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .dob {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .age {
+      display: inline-block;
+      background: rgba(192, 132, 252, 0.15);
+      color: var(--accent2);
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      margin-bottom: 1rem;
+    }
+
+    .timer {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.5rem;
+      text-align: center;
+    }
+
+    .unit {
+      background: rgba(255,255,255,0.04);
+      border-radius: 0.75rem;
+      padding: 0.7rem 0.3rem;
+    }
+
+    .unit .num {
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--accent);
+    }
+
+    .unit .label {
+      font-size: 0.65rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-top: 0.15rem;
+    }
+
+    .status {
+      margin-top: 1rem;
+      text-align: center;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .status.upcoming {
+      color: var(--accent);
+    }
+
+    .status.today {
+      color: var(--success);
+      font-size: 1.1rem;
+    }
+
+    .status.passed {
+      color: var(--muted);
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      color: var(--muted);
+      font-size: 0.8rem;
+    }
+
+    @media (max-width: 400px) {
+      .timer {
+        gap: 0.35rem;
+      }
+      .unit .num {
+        font-size: 1.25rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🎂 Birthday Countdown</h1>
+    <p>Sabhi DOB ke live timers • Next birthday tak ka countdown</p>
+  </header>
+
+  <div class="container" id="cards"></div>
+
+  <footer>
+    Made with ❤️ • Live countdown • Vercel pe deploy
+  </footer>
+
+  <script>
+    const birthdays = [
+      { name: "Rupali Yadav", dob: "2008-09-07" },
+      { name: "Deepali Yadav", dob: "2009-08-27" },
+      { name: "Advika Chaturvedi", dob: "2010-09-15" },
+      { name: "Myra Pandey", dob: "2010-09-02" },
+      { name: "Vaidehi Shukla", dob: "2011-09-04" },
+      { name: "Vaishnavi Rajput", dob: "2012-09-23" },
+      { name: "Rakshita Singh", dob: "2013-09-12" },
+      { name: "Aradhya Thakur", dob: "2014-09-02" },
+      { name: "Saanvi Malhotra", dob: "2015-09-21" }
+    ];
+
+    function getNextBirthday(dobStr) {
+      const [y, m, d] = dobStr.split('-').map(Number);
+      const now = new Date();
+      let next = new Date(now.getFullYear(), m - 1, d, 0, 0, 0);
+      if (next < now) {
+        next = new Date(now.getFullYear() + 1, m - 1, d, 0, 0, 0);
+      }
+      return next;
+    }
+
+    function getAge(dobStr) {
+      const [y, m, d] = dobStr.split('-').map(Number);
+      const today = new Date();
+      let age = today.getFullYear() - y;
+      const mDiff = today.getMonth() - (m - 1);
+      if (mDiff < 0 || (mDiff === 0 && today.getDate() < d)) {
+        age--;
+      }
+      return age;
+    }
+
+    function formatDate(dobStr) {
+      const [y, m, d] = dobStr.split('-');
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      return `${parseInt(d)} ${months[parseInt(m)-1]} ${y}`;
+    }
+
+    function updateTimers() {
+      const container = document.getElementById('cards');
+      const now = new Date();
+
+      // Sort by soonest next birthday
+      const sorted = [...birthdays].map(b => ({
+        ...b,
+        next: getNextBirthday(b.dob),
+        age: getAge(b.dob)
+      })).sort((a, b) => a.next - b.next);
+
+      container.innerHTML = sorted.map((b, idx) => {
+        const diff = b.next - now;
+        const isToday = diff < 86400000 && b.next.getDate() === now.getDate() && 
+                        b.next.getMonth() === now.getMonth();
+        
+        let days, hours, mins, secs;
+        if (isToday) {
+          days = hours = mins = secs = 0;
+        } else {
+          days = Math.floor(diff / (1000 * 60 * 60 * 24));
+          hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+          secs = Math.floor((diff % (1000 * 60)) / 1000);
+        }
+
+        const statusClass = isToday ? 'today' : 'upcoming';
+        const statusText = isToday 
+          ? '🎉 Aaj Birthday Hai! 🎉' 
+          : `Next birthday: ${b.next.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}`;
+
+        return `
+          <div class="card ${isToday ? 'today' : ''}">
+            <div class="name">${b.name}</div>
+            <div class="dob">🎂 ${formatDate(b.dob)}</div>
+            <div class="age">${b.age} years old</div>
+            <div class="timer">
+              <div class="unit"><div class="num">${String(days).padStart(2,'0')}</div><div class="label">Days</div></div>
+              <div class="unit"><div class="num">${String(hours).padStart(2,'0')}</div><div class="label">Hours</div></div>
+              <div class="unit"><div class="num">${String(mins).padStart(2,'0')}</div><div class="label">Mins</div></div>
+              <div class="unit"><div class="num">${String(secs).padStart(2,'0')}</div><div class="label">Secs</div></div>
+            </div>
+            <div class="status ${statusClass}">${statusText}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    updateTimers();
+    setInterval(updateTimers, 1000);
+  </script>
+</body>
+</html>
